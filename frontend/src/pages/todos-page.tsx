@@ -9,14 +9,17 @@ import { TodoList } from "@/components/todos/todo-list";
 import { TodosSkeleton } from "@/components/todos/todos-skeleton";
 import { Button } from "@/components/ui/button";
 import { useTodos } from "@/hooks/todos/use-todos";
+import { useToggleTodo } from "@/hooks/todos/use-toggle-todo";
 import { tasksCountLabel } from "@/lib/utils";
 import type { Todo } from "@/types/todo";
 
 export const TodosPage = () => {
-  const { todos, isLoading, error, reload } = useTodos();
+  const { todos, isLoading, error, reload, replaceTodo } = useTodos();
+  const { toggle, pendingId } = useToggleTodo();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [deletingTodo, setDeletingTodo] = useState<Todo | null>(null);
+  const completedCount = todos.filter((todo) => todo.completed).length;
 
   const openCreate = () => {
     setEditingTodo(null);
@@ -30,6 +33,15 @@ export const TodosPage = () => {
 
   const handleSaved = () => {
     void reload();
+  };
+
+  const handleToggle = async (todo: Todo) => {
+    try {
+      const updated = await toggle(todo);
+      replaceTodo(updated);
+    } catch {
+      void reload();
+    }
   };
 
   return (
@@ -61,7 +73,9 @@ export const TodosPage = () => {
         <div class="mt-8 mb-4 flex items-end justify-between gap-4">
           <div>
             <h2 class="text-lg font-extrabold tracking-[-0.025em]">Последние задачи</h2>
-            <p class="mt-1 text-sm text-muted-foreground">{tasksCountLabel(todos.length)}</p>
+            <p class="mt-1 text-sm text-muted-foreground">
+              {tasksCountLabel(todos.length)} · выполнено: {completedCount}
+            </p>
           </div>
         </div>
 
@@ -82,7 +96,13 @@ export const TodosPage = () => {
         {!isLoading && !error && todos.length === 0 ? <EmptyState onCreate={openCreate} /> : null}
 
         {!isLoading && !error && todos.length > 0 ? (
-          <TodoList todos={todos} onEdit={openEdit} onDelete={setDeletingTodo} />
+          <TodoList
+            todos={todos}
+            pendingId={pendingId}
+            onToggle={handleToggle}
+            onEdit={openEdit}
+            onDelete={setDeletingTodo}
+          />
         ) : null}
 
         <footer class="mt-14 flex flex-col items-center justify-between gap-2 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row">

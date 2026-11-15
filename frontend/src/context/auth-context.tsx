@@ -3,6 +3,7 @@ import { createContext } from "preact";
 import { useCallback, useEffect, useMemo, useState } from "preact/hooks";
 
 import { loginRequest, logoutRequest, meRequest, registerRequest } from "../api/auth";
+import { ApiError } from "../api/client";
 import type { LoginInput, RegisterInput, User } from "../types/auth";
 
 export interface AuthContextValue {
@@ -63,6 +64,27 @@ export const AuthProvider = ({ children }: { children: ComponentChildren }) => {
       setUser(null);
     }
   }, []);
+
+  const syncUser = useCallback(async () => {
+    try {
+      const response = await meRequest();
+      setUser(response.user);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        setUser(null);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFocus = () => {
+      void syncUser();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [syncUser]);
 
   const value = useMemo(
     () => ({ user, isLoading, login, register, logout }),

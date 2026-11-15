@@ -4,6 +4,7 @@ import express from "express";
 import helmet from "helmet";
 
 import { env } from "./config/env";
+import { isMailConfigured } from "./lib/mailer";
 import { errorHandler, notFoundHandler } from "./middleware/error-handler";
 import { authRouter } from "./modules/auth/auth.routes";
 import { todosRouter } from "./modules/todos/todos.routes";
@@ -30,7 +31,7 @@ app.use((request, _response, next) => {
 });
 
 app.get("/api/health", (_request, response) => {
-  response.json({ status: "ok" });
+  response.json({ status: "ok", mail: isMailConfigured() });
 });
 
 app.use("/api/auth", authRouter);

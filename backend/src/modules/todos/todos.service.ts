@@ -6,6 +6,7 @@ const todoSelect = {
   id: true,
   title: true,
   description: true,
+  completed: true,
   createdAt: true,
 } as const;
 
@@ -45,6 +46,7 @@ export const updateTodo = async (
     data: {
       title: input.title,
       description: input.description,
+      completed: input.completed,
     },
     select: todoSelect,
   });

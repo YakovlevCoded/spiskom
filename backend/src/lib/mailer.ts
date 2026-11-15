@@ -9,6 +9,13 @@ export interface MailMessage {
   text: string;
 }
 
+const localAddressPattern = /@[^>\s]+\.local\b/;
+
+export const isMailConfigured = () => Boolean(env.RESEND_API_KEY || env.SMTP_HOST);
+
+const getResendFrom = () =>
+  localAddressPattern.test(env.MAIL_FROM) ? "Списком <onboarding@resend.dev>" : env.MAIL_FROM;
+
 const sendWithResend = async (message: MailMessage) => {
   if (!env.RESEND_API_KEY) {
     return false;
@@ -21,7 +28,7 @@ const sendWithResend = async (message: MailMessage) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: env.MAIL_FROM,
+      from: getResendFrom(),
       to: [message.to],
       subject: message.subject,
       html: message.html,
@@ -30,7 +37,9 @@ const sendWithResend = async (message: MailMessage) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Resend ответил статусом ${response.status}`);
+    const details = await response.text();
+
+    throw new Error(`Resend ответил статусом ${response.status}: ${details}`);
   }
 
   return true;

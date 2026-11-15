@@ -23,9 +23,13 @@ export const useTodos = () => {
     }
   }, []);
 
+  const replaceTodo = useCallback((updated: Todo) => {
+    setTodos((current) => current.map((todo) => (todo.id === updated.id ? updated : todo)));
+  }, []);
+
   useEffect(() => {
     void reload();
   }, [reload]);
 
-  return { todos, isLoading, error, reload };
+  return { todos, isLoading, error, reload, replaceTodo };
 };

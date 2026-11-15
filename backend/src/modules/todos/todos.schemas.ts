@@ -24,7 +24,12 @@ export const updateTodoSchema = z
       .max(120, "Заголовок должен быть не длиннее 120 символов")
       .optional(),
     description: descriptionSchema.optional(),
+    completed: z.boolean().optional(),
   })
-  .refine((value) => value.title !== undefined || value.description !== undefined, {
-    message: "Нужно передать заголовок или описание",
-  });
+  .refine(
+    (value) =>
+      value.title !== undefined || value.description !== undefined || value.completed !== undefined,
+    {
+      message: "Нужно передать заголовок, описание или статус",
+    },
+  );

@@ -21,6 +21,7 @@ const seed = async () => {
           userId: user.id,
           title: "Навести порядок в списке дел",
           description: "Вычеркнуть лишнее, оставить важное.",
+          completed: true,
         },
         {
           userId: user.id,
