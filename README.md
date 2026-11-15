@@ -6,6 +6,8 @@
 
 ![Список задач](docs/screenshots/todos.jpg)
 
+![Создание задачи](docs/screenshots/dialog.jpg)
+
 ## Возможности
 
 - Регистрация и вход по email и паролю.
@@ -115,6 +117,36 @@ npm run dev
 - Vite проксирует `/api` на API, поэтому cookie работает как same-origin.
 
 Если SMTP не настроен, письма выводятся в консоль API вместе со ссылкой сброса. Это удобно для локальной проверки без почтового сервиса.
+
+Демо-данные для локального запуска:
+
+```bash
+npm --prefix backend run db:seed
+```
+
+Аккаунт: `demo@spiskom.ru`, пароль: `demo12345`.
+
+### Почта при локальном запуске
+
+Без SMTP письма не отправляются наружу, а печатаются в консоли API. Там же находится ссылка для сброса пароля.
+
+Чтобы получать письма на Gmail:
+
+1. Включите двухэтапную аутентификацию в Google.
+2. Создайте пароль приложения: https://myaccount.google.com/apppasswords
+3. Добавьте в `backend/.env`:
+
+```text
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=your-address@gmail.com
+SMTP_PASSWORD=app-password-without-spaces
+MAIL_FROM="Списком <your-address@gmail.com>"
+```
+
+4. Перезапустите API.
+
+Обычный пароль Google здесь не подходит. Если Gmail отклоняет отправку, используйте Mailpit в Docker, Resend API или другой SMTP-сервис. Регистрация при этом работает и без почты: аккаунт создаётся, а письмо просто не уходит.
 
 ## Переменные окружения
 
