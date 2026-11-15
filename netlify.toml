@@ -1,0 +1,23 @@
+[build]
+  base = "."
+  command = "bash scripts/netlify-build.sh"
+  publish = "frontend/dist"
+  functions = "backend/netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  HUSKY = "0"
+
+[functions]
+  included_files = ["backend/node_modules/.prisma/**", "backend/node_modules/@prisma/client/**"]
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
