@@ -60,7 +60,7 @@ JWT_SECRET=<длинный случайный секрет>
 APP_URL=https://spiskom.netlify.app
 WEB_ORIGIN=https://spiskom.netlify.app
 COOKIE_SECURE=true
-MAIL_FROM=Списком <onboarding@resend.dev>
+MAIL_FROM="Списком <onboarding@resend.dev>"
 RESEND_API_KEY=<ключ Resend или пусто>
 ```
 
