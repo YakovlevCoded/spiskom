@@ -1,14 +1,14 @@
 import { useState } from "preact/hooks";
 
-import { forgotPasswordRequest } from "../../api/auth";
-import { getErrorMessage, getFieldErrors } from "../../lib/errors";
-import { forgotPasswordSchema } from "../../schemas/auth";
-import type { FormErrors } from "../../types/api";
+import { useForgotPassword } from "@/hooks/auth/use-forgot-password";
+import { getErrorMessage, getFieldErrors } from "@/lib/errors";
+import { forgotPasswordSchema } from "@/schemas/auth";
+import type { FormErrors } from "@/types/api";
 
 export const useForgotPasswordForm = () => {
+  const { request, isPending } = useForgotPassword();
   const [errors, setErrors] = useState<FormErrors>({});
   const [formError, setFormError] = useState("");
-  const [isPending, setIsPending] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
   const submit = async (event: Event) => {
@@ -23,15 +23,12 @@ export const useForgotPasswordForm = () => {
 
     setErrors({});
     setFormError("");
-    setIsPending(true);
 
     try {
-      await forgotPasswordRequest(parsed.data);
+      await request(parsed.data.email);
       setIsSent(true);
     } catch (error) {
       setFormError(getErrorMessage(error));
-    } finally {
-      setIsPending(false);
     }
   };
 

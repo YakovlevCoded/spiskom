@@ -1,13 +1,12 @@
 import { LoaderCircle } from "lucide-preact";
 
-import { useLoginForm } from "@/hooks/auth/use-login-form";
-
 import { Button } from "../ui/button";
 import { Field } from "../ui/field";
 import { FormAlert } from "../ui/form-alert";
 import { Input } from "../ui/input";
 import { Link } from "../ui/link";
 import { AuthCard } from "./auth-card";
+import { useLoginForm } from "./use-login-form";
 
 export const LoginForm = () => {
   const { errors, formError, isPending, submit } = useLoginForm();

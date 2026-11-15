@@ -1,13 +1,12 @@
 import { LoaderCircle } from "lucide-preact";
 
-import { useRegisterForm } from "@/hooks/auth/use-register-form";
-
 import { Button } from "../ui/button";
 import { Field } from "../ui/field";
 import { FormAlert } from "../ui/form-alert";
 import { Input } from "../ui/input";
 import { Link } from "../ui/link";
 import { AuthCard } from "./auth-card";
+import { useRegisterForm } from "./use-register-form";
 
 export const RegisterForm = () => {
   const { errors, formError, isPending, submit } = useRegisterForm();

@@ -1,14 +1,14 @@
 import { useState } from "preact/hooks";
 
-import { resetPasswordRequest } from "../../api/auth";
-import { getErrorMessage, getFieldErrors } from "../../lib/errors";
-import { resetPasswordSchema } from "../../schemas/auth";
-import type { FormErrors } from "../../types/api";
+import { useResetPassword } from "@/hooks/auth/use-reset-password";
+import { getErrorMessage, getFieldErrors } from "@/lib/errors";
+import { resetPasswordSchema } from "@/schemas/auth";
+import type { FormErrors } from "@/types/api";
 
 export const useResetPasswordForm = (token: string) => {
+  const { reset, isPending } = useResetPassword();
   const [errors, setErrors] = useState<FormErrors>({});
   const [formError, setFormError] = useState("");
-  const [isPending, setIsPending] = useState(false);
   const [isReset, setIsReset] = useState(false);
 
   const submit = async (event: Event) => {
@@ -23,15 +23,12 @@ export const useResetPasswordForm = (token: string) => {
 
     setErrors({});
     setFormError("");
-    setIsPending(true);
 
     try {
-      await resetPasswordRequest({ token, password: parsed.data.password });
+      await reset(token, parsed.data.password);
       setIsReset(true);
     } catch (error) {
       setFormError(getErrorMessage(error));
-    } finally {
-      setIsPending(false);
     }
   };
 

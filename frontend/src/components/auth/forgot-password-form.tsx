@@ -1,13 +1,12 @@
 import { LoaderCircle, MailCheck } from "lucide-preact";
 
-import { useForgotPasswordForm } from "@/hooks/auth/use-forgot-password-form";
-
 import { Button } from "../ui/button";
 import { Field } from "../ui/field";
 import { FormAlert } from "../ui/form-alert";
 import { Input } from "../ui/input";
 import { Link } from "../ui/link";
 import { AuthCard } from "./auth-card";
+import { useForgotPasswordForm } from "./use-forgot-password-form";
 
 export const ForgotPasswordForm = () => {
   const { errors, formError, isPending, isSent, submit } = useForgotPasswordForm();

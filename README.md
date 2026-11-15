@@ -264,10 +264,10 @@ GET    /api/health
 ### Границы ответственности
 
 - `frontend/src/types` — только типы.
-- `frontend/src/api` — HTTP-запросы.
-- `frontend/src/hooks` — состояние, мутации и формы.
-- `frontend/src/components/ui` — shadcn/ui-примитивы и хуки для их поведения.
-- `frontend/src/components/todos` и `auth` — презентационные компоненты.
+- `frontend/src/api` — низкоуровневый HTTP-клиент и `fetch`.
+- `frontend/src/hooks` — бизнес-хуки: загрузка данных, мутации и правила.
+- `frontend/src/components/ui` — shadcn/ui-примитивы и UI-хуки для их поведения.
+- `frontend/src/components/todos` и `auth` — презентационные компоненты и UI-хуки рядом.
 - `frontend/src/pages` — композиция.
 - `backend/src/modules/*/routes` — HTTP и валидация.
 - `backend/src/modules/*/service` — бизнес-логика и Prisma.

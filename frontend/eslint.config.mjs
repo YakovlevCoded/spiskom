@@ -59,6 +59,14 @@ const hookImportRestrictions = [
   },
 ];
 
+const uiHookImportRestrictions = [
+  ...hookImportRestrictions,
+  {
+    group: ["@/api", "@/api/*"],
+    message: "UI-хук не должен вызывать API. Используй бизнес-хук из src/hooks.",
+  },
+];
+
 const noUiLogic = [
   {
     selector: "CallExpression[callee.name='useState']",
@@ -138,7 +146,16 @@ export default tseslint.config(
     },
   },
   {
-    files: ["src/hooks/**/*.ts", "src/components/**/use-*.ts"],
+    files: ["src/hooks/**/*.ts"],
+    rules: {
+      "max-lines": ["error", { max: 80, skipBlankLines: true }],
+      "max-lines-per-function": ["error", { max: 30, skipBlankLines: true }],
+      "max-params": ["error", 3],
+      "no-restricted-imports": ["error", { patterns: hookImportRestrictions }],
+    },
+  },
+  {
+    files: ["src/components/**/use-*.ts"],
     rules: {
       "max-lines": ["error", { max: 80, skipBlankLines: true }],
       "max-lines-per-function": ["error", { max: 30, skipBlankLines: true }],
@@ -147,10 +164,10 @@ export default tseslint.config(
         "error",
         {
           name: "fetch",
-          message: "Запросы выполняются только в src/api.",
+          message: "UI-хук не выполняет запросы. Вынеси их в бизнес-хук из src/hooks.",
         },
       ],
-      "no-restricted-imports": ["error", { patterns: hookImportRestrictions }],
+      "no-restricted-imports": ["error", { patterns: uiHookImportRestrictions }],
     },
   },
   {

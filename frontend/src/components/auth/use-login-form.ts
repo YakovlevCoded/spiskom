@@ -1,12 +1,12 @@
 import { useState } from "preact/hooks";
 
-import { getErrorMessage, getFieldErrors } from "../../lib/errors";
-import { registerSchema } from "../../schemas/auth";
-import type { FormErrors } from "../../types/api";
-import { useAuth } from "../use-auth";
+import { useAuth } from "@/hooks/use-auth";
+import { getErrorMessage, getFieldErrors } from "@/lib/errors";
+import { loginSchema } from "@/schemas/auth";
+import type { FormErrors } from "@/types/api";
 
-export const useRegisterForm = () => {
-  const { register } = useAuth();
+export const useLoginForm = () => {
+  const { login } = useAuth();
   const [errors, setErrors] = useState<FormErrors>({});
   const [formError, setFormError] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -14,7 +14,7 @@ export const useRegisterForm = () => {
   const submit = async (event: Event) => {
     event.preventDefault();
     const form = event.currentTarget as HTMLFormElement;
-    const parsed = registerSchema.safeParse(Object.fromEntries(new FormData(form)));
+    const parsed = loginSchema.safeParse(Object.fromEntries(new FormData(form)));
 
     if (!parsed.success) {
       setErrors(getFieldErrors(parsed.error));
@@ -26,7 +26,7 @@ export const useRegisterForm = () => {
     setIsPending(true);
 
     try {
-      await register({ email: parsed.data.email, password: parsed.data.password });
+      await login(parsed.data);
     } catch (error) {
       setFormError(getErrorMessage(error));
     } finally {

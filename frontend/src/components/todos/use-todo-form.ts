@@ -1,11 +1,11 @@
 import { useState } from "preact/hooks";
 
-import { getErrorMessage, getFieldErrors } from "../../lib/errors";
-import { todoSchema } from "../../schemas/todo";
-import type { FormErrors } from "../../types/api";
-import type { Todo } from "../../types/todo";
-import { useCreateTodo } from "./use-create-todo";
-import { useUpdateTodo } from "./use-update-todo";
+import { useCreateTodo } from "@/hooks/todos/use-create-todo";
+import { useUpdateTodo } from "@/hooks/todos/use-update-todo";
+import { getErrorMessage, getFieldErrors } from "@/lib/errors";
+import { todoSchema } from "@/schemas/todo";
+import type { FormErrors } from "@/types/api";
+import type { Todo } from "@/types/todo";
 
 export const useTodoForm = (todo: Todo | null, onSuccess: () => void) => {
   const { create, isPending: isCreating } = useCreateTodo();
