@@ -54,9 +54,9 @@ docker compose down -v
 
 ```text
 NODE_ENV=production
-DATABASE_URL=<transaction-pooler-url>
-DIRECT_URL=<session-pooler-url>
-JWT_SECRET=<длинный случайный секрет>
+DATABASE_URL="<transaction-pooler-url>"
+DIRECT_URL="<session-pooler-url>"
+JWT_SECRET="<длинный случайный секрет>"
 APP_URL=https://spiskom.netlify.app
 WEB_ORIGIN=https://spiskom.netlify.app
 COOKIE_SECURE=true
