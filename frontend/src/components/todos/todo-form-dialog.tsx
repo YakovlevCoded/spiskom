@@ -1,7 +1,7 @@
 import { LoaderCircle } from "lucide-preact";
 
 import { useTodoForm } from "@/hooks/todos/use-todo-form";
-import type { Todo } from "@/types/todo";
+import type { TodoFormDialogProps } from "@/types/todo-components";
 
 import { Button } from "../ui/button";
 import { Dialog } from "../ui/dialog";
@@ -9,12 +9,6 @@ import { Field } from "../ui/field";
 import { FormAlert } from "../ui/form-alert";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-
-interface TodoFormDialogProps {
-  todo: Todo | null;
-  onClose: () => void;
-  onSaved: () => void;
-}
 
 export const TodoFormDialog = ({ todo, onClose, onSaved }: TodoFormDialogProps) => {
   const { errors, formError, isPending, submit } = useTodoForm(todo, () => {

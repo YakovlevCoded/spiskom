@@ -1,19 +1,11 @@
 import { X } from "lucide-preact";
-import type { ComponentChildren } from "preact";
-import { useEffect, useId, useRef } from "preact/hooks";
+import { useId } from "preact/hooks";
 
 import { cn } from "@/lib/utils";
+import type { DialogProps } from "@/types/ui";
 
 import { Button } from "./button";
-
-interface DialogProps {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  description?: string;
-  children: ComponentChildren;
-  class?: string;
-}
+import { useDialog } from "./use-dialog";
 
 export const Dialog = ({
   open,
@@ -23,38 +15,9 @@ export const Dialog = ({
   children,
   class: className,
 }: DialogProps) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const dialogRef = useDialog(open, onClose);
   const titleId = useId();
   const descriptionId = useId();
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-
-    if (!dialog) {
-      return;
-    }
-
-    if (open && !dialog.open) {
-      dialog.showModal();
-    }
-
-    if (!open && dialog.open) {
-      dialog.close();
-    }
-  }, [open]);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-
-    if (!dialog) {
-      return;
-    }
-
-    const handleClose = () => onClose();
-    dialog.addEventListener("close", handleClose);
-
-    return () => dialog.removeEventListener("close", handleClose);
-  }, [onClose]);
 
   return (
     <dialog

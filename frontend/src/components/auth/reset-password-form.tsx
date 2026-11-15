@@ -1,6 +1,7 @@
 import { CheckCircle2, LoaderCircle } from "lucide-preact";
 
 import { useResetPasswordForm } from "@/hooks/auth/use-reset-password-form";
+import type { ResetPasswordFormProps } from "@/types/auth";
 
 import { Button } from "../ui/button";
 import { Field } from "../ui/field";
@@ -9,7 +10,7 @@ import { Input } from "../ui/input";
 import { Link } from "../ui/link";
 import { AuthCard } from "./auth-card";
 
-export const ResetPasswordForm = ({ token }: { token: string }) => {
+export const ResetPasswordForm = ({ token }: ResetPasswordFormProps) => {
   const { errors, formError, isPending, isReset, submit } = useResetPasswordForm(token);
 
   if (!token) {

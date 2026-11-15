@@ -1,22 +1,19 @@
-import type { ComponentChildren } from "preact";
 import { createContext } from "preact";
 import { useCallback, useEffect, useMemo, useState } from "preact/hooks";
 
 import { loginRequest, logoutRequest, meRequest, registerRequest } from "../api/auth";
 import { ApiError } from "../api/client";
-import type { LoginInput, RegisterInput, User } from "../types/auth";
-
-export interface AuthContextValue {
-  user: User | null;
-  isLoading: boolean;
-  login: (input: LoginInput) => Promise<User>;
-  register: (input: RegisterInput) => Promise<User>;
-  logout: () => Promise<void>;
-}
+import type {
+  AuthContextValue,
+  AuthProviderProps,
+  LoginInput,
+  RegisterInput,
+  User,
+} from "../types/auth";
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-export const AuthProvider = ({ children }: { children: ComponentChildren }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

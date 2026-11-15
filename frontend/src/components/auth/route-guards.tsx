@@ -1,20 +1,10 @@
-import type { ComponentChildren } from "preact";
-import { useEffect } from "preact/hooks";
-import { useLocation } from "preact-iso";
-
-import { useAuth } from "@/hooks/use-auth";
+import type { AuthRouteProps } from "@/types/auth-components";
 
 import { PageLoader } from "../layout/page-loader";
+import { useRouteGuard } from "./use-route-guard";
 
-export const ProtectedRoute = ({ children }: { children: ComponentChildren }) => {
-  const { user, isLoading } = useAuth();
-  const { route } = useLocation();
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      route("/login", true);
-    }
-  }, [isLoading, user, route]);
+export const ProtectedRoute = ({ children }: AuthRouteProps) => {
+  const { user, isLoading } = useRouteGuard("protected");
 
   if (isLoading) {
     return <PageLoader />;
@@ -27,15 +17,8 @@ export const ProtectedRoute = ({ children }: { children: ComponentChildren }) =>
   return <>{children}</>;
 };
 
-export const GuestRoute = ({ children }: { children: ComponentChildren }) => {
-  const { user, isLoading } = useAuth();
-  const { route } = useLocation();
-
-  useEffect(() => {
-    if (!isLoading && user) {
-      route("/", true);
-    }
-  }, [isLoading, user, route]);
+export const GuestRoute = ({ children }: AuthRouteProps) => {
+  const { user, isLoading } = useRouteGuard("guest");
 
   if (isLoading) {
     return <PageLoader />;

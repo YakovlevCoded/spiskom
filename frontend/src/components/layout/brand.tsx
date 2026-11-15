@@ -1,11 +1,7 @@
 import { ListTodo } from "lucide-preact";
 
 import { cn } from "@/lib/utils";
-
-interface BrandProps {
-  inverted?: boolean;
-  compact?: boolean;
-}
+import type { BrandProps } from "@/types/layout";
 
 export const Brand = ({ inverted = false, compact = false }: BrandProps) => (
   <div class="flex items-center gap-3">

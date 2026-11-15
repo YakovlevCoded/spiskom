@@ -1,5 +1,4 @@
 import { AlertCircle, Plus, RefreshCw } from "lucide-preact";
-import { useState } from "preact/hooks";
 
 import { AppHeader } from "@/components/layout/app-header";
 import { DeleteTodoDialog } from "@/components/todos/delete-todo-dialog";
@@ -7,41 +6,31 @@ import { EmptyState } from "@/components/todos/empty-state";
 import { TodoFormDialog } from "@/components/todos/todo-form-dialog";
 import { TodoList } from "@/components/todos/todo-list";
 import { TodosSkeleton } from "@/components/todos/todos-skeleton";
+import { useTodoDialogs } from "@/components/todos/use-todo-dialogs";
+import { useTodoToggle } from "@/components/todos/use-todo-toggle";
 import { Button } from "@/components/ui/button";
 import { useTodos } from "@/hooks/todos/use-todos";
-import { useToggleTodo } from "@/hooks/todos/use-toggle-todo";
 import { tasksCountLabel } from "@/lib/utils";
-import type { Todo } from "@/types/todo";
 
 export const TodosPage = () => {
   const { todos, isLoading, error, reload, replaceTodo } = useTodos();
-  const { toggle, pendingId } = useToggleTodo();
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
-  const [deletingTodo, setDeletingTodo] = useState<Todo | null>(null);
+  const {
+    isFormOpen,
+    editingTodo,
+    deletingTodo,
+    openCreate,
+    openEdit,
+    closeForm,
+    setDeletingTodo,
+    closeDelete,
+  } = useTodoDialogs();
+  const { handleToggle, pendingId } = useTodoToggle(replaceTodo, () => {
+    void reload();
+  });
   const completedCount = todos.filter((todo) => todo.completed).length;
-
-  const openCreate = () => {
-    setEditingTodo(null);
-    setIsFormOpen(true);
-  };
-
-  const openEdit = (todo: Todo) => {
-    setEditingTodo(todo);
-    setIsFormOpen(true);
-  };
 
   const handleSaved = () => {
     void reload();
-  };
-
-  const handleToggle = async (todo: Todo) => {
-    try {
-      const updated = await toggle(todo);
-      replaceTodo(updated);
-    } catch {
-      void reload();
-    }
   };
 
   return (
@@ -115,17 +104,13 @@ export const TodosPage = () => {
         <TodoFormDialog
           key={editingTodo?.id ?? "new"}
           todo={editingTodo}
-          onClose={() => setIsFormOpen(false)}
+          onClose={closeForm}
           onSaved={handleSaved}
         />
       ) : null}
 
       {deletingTodo ? (
-        <DeleteTodoDialog
-          todo={deletingTodo}
-          onClose={() => setDeletingTodo(null)}
-          onDeleted={handleSaved}
-        />
+        <DeleteTodoDialog todo={deletingTodo} onClose={closeDelete} onDeleted={handleSaved} />
       ) : null}
     </div>
   );

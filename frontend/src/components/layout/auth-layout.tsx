@@ -1,5 +1,6 @@
 import { Check, Clock3, ShieldCheck } from "lucide-preact";
-import type { ComponentChildren } from "preact";
+
+import type { AuthLayoutProps } from "@/types/layout";
 
 import { Brand } from "./brand";
 
@@ -9,7 +10,7 @@ const features = [
   { icon: ShieldCheck, text: "Ваши записи видите только вы" },
 ];
 
-export const AuthLayout = ({ children }: { children: ComponentChildren }) => (
+export const AuthLayout = ({ children }: AuthLayoutProps) => (
   <div class="min-h-screen lg:grid lg:grid-cols-[1.08fr_1fr]">
     <aside class="relative hidden overflow-hidden bg-[#244c3c] p-10 text-[#f7f2e8] lg:flex lg:flex-col lg:justify-between xl:p-14">
       <div class="pointer-events-none absolute -top-28 -right-24 size-96 rounded-full border border-white/10" />

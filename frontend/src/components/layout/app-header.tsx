@@ -1,26 +1,11 @@
 import { LoaderCircle, LogOut } from "lucide-preact";
-import { useState } from "preact/hooks";
-
-import { useAuth } from "@/hooks/use-auth";
 
 import { Button } from "../ui/button";
 import { Brand } from "./brand";
+import { useAppHeader } from "./use-app-header";
 
 export const AppHeader = () => {
-  const { user, logout } = useAuth();
-  const [isPending, setIsPending] = useState(false);
-
-  const handleLogout = async () => {
-    setIsPending(true);
-
-    try {
-      await logout();
-    } finally {
-      setIsPending(false);
-    }
-  };
-
-  const initial = user?.email.slice(0, 1).toUpperCase() ?? "?";
+  const { user, isPending, handleLogout, initial } = useAppHeader();
 
   return (
     <header class="sticky top-0 z-20 border-b border-border/60 bg-background/80 backdrop-blur-xl">

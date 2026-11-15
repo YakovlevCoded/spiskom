@@ -1,14 +1,6 @@
-import type { ComponentChildren } from "preact";
+import type { FieldProps } from "@/types/ui";
 
 import { Label } from "./label";
-
-interface FieldProps {
-  label: string;
-  htmlFor: string;
-  error?: string;
-  hint?: ComponentChildren;
-  children: ComponentChildren;
-}
 
 export const Field = ({ label, htmlFor, error, hint, children }: FieldProps) => (
   <div class="space-y-2">

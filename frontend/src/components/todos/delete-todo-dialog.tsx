@@ -1,35 +1,14 @@
 import { LoaderCircle, Trash2 } from "lucide-preact";
-import { useState } from "preact/hooks";
 
-import { useDeleteTodo } from "@/hooks/todos/use-delete-todo";
-import { getErrorMessage } from "@/lib/errors";
-import type { Todo } from "@/types/todo";
+import type { DeleteTodoDialogProps } from "@/types/todo-components";
 
 import { Button } from "../ui/button";
 import { Dialog } from "../ui/dialog";
 import { FormAlert } from "../ui/form-alert";
-
-interface DeleteTodoDialogProps {
-  todo: Todo;
-  onClose: () => void;
-  onDeleted: () => void;
-}
+import { useDeleteTodoDialog } from "./use-delete-todo-dialog";
 
 export const DeleteTodoDialog = ({ todo, onClose, onDeleted }: DeleteTodoDialogProps) => {
-  const { remove, isPending } = useDeleteTodo();
-  const [error, setError] = useState("");
-
-  const handleDelete = async () => {
-    setError("");
-
-    try {
-      await remove(todo.id);
-      onDeleted();
-      onClose();
-    } catch (deleteError) {
-      setError(getErrorMessage(deleteError));
-    }
-  };
+  const { error, isPending, handleDelete } = useDeleteTodoDialog(onDeleted, onClose);
 
   return (
     <Dialog
@@ -48,7 +27,7 @@ export const DeleteTodoDialog = ({ todo, onClose, onDeleted }: DeleteTodoDialogP
           <Button variant="outline" onClick={onClose} disabled={isPending}>
             Отмена
           </Button>
-          <Button variant="destructive" onClick={handleDelete} disabled={isPending}>
+          <Button variant="destructive" onClick={() => handleDelete(todo.id)} disabled={isPending}>
             {isPending ? <LoaderCircle class="animate-spin" size={16} /> : <Trash2 size={16} />}
             Удалить
           </Button>

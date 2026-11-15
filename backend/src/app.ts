@@ -12,6 +12,11 @@ import { todosRouter } from "./modules/todos/todos.routes";
 export const app = express();
 
 app.set("trust proxy", 1);
+app.set("etag", false);
+app.use((_request, response, next) => {
+  response.set("Cache-Control", "no-store");
+  next();
+});
 app.use(helmet());
 app.use(
   cors({

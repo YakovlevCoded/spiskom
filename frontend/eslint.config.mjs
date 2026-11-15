@@ -51,7 +51,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["src/hooks/**/*.ts"],
+    files: ["src/hooks/**/*.ts", "src/components/**/use-*.ts"],
     rules: {
       "max-lines-per-function": ["error", { max: 30, skipBlankLines: true }],
     },

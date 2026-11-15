@@ -1,0 +1,26 @@
+ALTER TABLE "User" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Todo" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "PasswordResetToken" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "_prisma_migrations" ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    EXECUTE 'REVOKE ALL ON TABLE "User" FROM anon';
+    EXECUTE 'REVOKE ALL ON TABLE "Todo" FROM anon';
+    EXECUTE 'REVOKE ALL ON TABLE "PasswordResetToken" FROM anon';
+    EXECUTE 'REVOKE ALL ON TABLE "_prisma_migrations" FROM anon';
+    EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM anon';
+    EXECUTE 'REVOKE ALL ON ALL ROUTINES IN SCHEMA public FROM anon';
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    EXECUTE 'REVOKE ALL ON TABLE "User" FROM authenticated';
+    EXECUTE 'REVOKE ALL ON TABLE "Todo" FROM authenticated';
+    EXECUTE 'REVOKE ALL ON TABLE "PasswordResetToken" FROM authenticated';
+    EXECUTE 'REVOKE ALL ON TABLE "_prisma_migrations" FROM authenticated';
+    EXECUTE 'REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM authenticated';
+    EXECUTE 'REVOKE ALL ON ALL ROUTINES IN SCHEMA public FROM authenticated';
+  END IF;
+END
+$$;

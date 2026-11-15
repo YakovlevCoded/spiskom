@@ -1,17 +1,10 @@
-import { CalendarDays, Check, LoaderCircle, Pencil, Trash2 } from "lucide-preact";
+import { CalendarDays, Pencil, Trash2 } from "lucide-preact";
 
 import { cn, formatCreatedAt } from "@/lib/utils";
-import type { Todo } from "@/types/todo";
+import type { TodoCardProps } from "@/types/todo-components";
 
 import { Button } from "../ui/button";
-
-interface TodoCardProps {
-  todo: Todo;
-  isToggling: boolean;
-  onToggle: (todo: Todo) => void;
-  onEdit: (todo: Todo) => void;
-  onDelete: (todo: Todo) => void;
-}
+import { Checkbox } from "../ui/checkbox";
 
 export const TodoCard = ({ todo, isToggling, onToggle, onEdit, onDelete }: TodoCardProps) => (
   <article
@@ -21,30 +14,16 @@ export const TodoCard = ({ todo, isToggling, onToggle, onEdit, onDelete }: TodoC
     )}
   >
     <div class="flex items-start gap-3.5">
-      <button
-        type="button"
-        role="checkbox"
-        aria-checked={todo.completed}
-        aria-label={
+      <Checkbox
+        checked={todo.completed}
+        disabled={isToggling}
+        label={
           todo.completed
             ? `Вернуть задачу «${todo.title}» в работу`
             : `Отметить задачу «${todo.title}» выполненной`
         }
-        disabled={isToggling}
-        onClick={() => onToggle(todo)}
-        class={cn(
-          "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
-          todo.completed
-            ? "border-primary bg-primary text-primary-foreground"
-            : "border-border bg-card text-transparent hover:border-ring",
-        )}
-      >
-        {isToggling ? (
-          <LoaderCircle class="animate-spin text-muted-foreground" size={13} />
-        ) : (
-          <Check size={14} strokeWidth={3} />
-        )}
-      </button>
+        onCheckedChange={() => onToggle(todo)}
+      />
 
       <div class="min-w-0 flex-1">
         <div class="flex items-start justify-between gap-4">

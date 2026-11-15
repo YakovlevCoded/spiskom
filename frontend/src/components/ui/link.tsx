@@ -1,25 +1,10 @@
-import type { ComponentChildren } from "preact";
-import { useLocation } from "preact-iso";
-
 import { cn } from "@/lib/utils";
+import type { LinkProps } from "@/types/ui";
 
-interface LinkProps {
-  href: string;
-  class?: string;
-  children: ComponentChildren;
-}
+import { useAppLink } from "./use-link";
 
 export const Link = ({ href, class: className, children }: LinkProps) => {
-  const { route } = useLocation();
-
-  const handleClick = (event: MouseEvent) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-      return;
-    }
-
-    event.preventDefault();
-    route(href);
-  };
+  const { handleClick } = useAppLink(href);
 
   return (
     <a href={href} class={cn(className)} onClick={handleClick}>

@@ -1,6 +1,20 @@
 # Списком
 
+**Прод-версия: [spiskom.netlify.app](https://spiskom.netlify.app)**
+
 Спокойный список задач: регистрация, вход, создание, редактирование и удаление записей. Интерфейс полностью на русском, данные пользователя видны только ему.
+
+## Запуск одной командой
+
+Нужен только Docker с Docker Compose. Node.js, PostgreSQL и почтовый сервис устанавливать не нужно.
+
+```bash
+./start.sh
+```
+
+Приложение: http://localhost:8080 · API: http://localhost:4000/api · письма: http://localhost:8025
+
+База, миграции, API, фронтенд и Mailpit поднимаются автоматически. Настройки читаются из корневого `.env`, шаблон — `.env.example`. Если указан `RESEND_API_KEY`, письма уходят через Resend; иначе остаются в Mailpit.
 
 ![Вход](docs/screenshots/login.jpg)
 
@@ -26,7 +40,7 @@
 
 | Слой | Технологии |
 | --- | --- |
-| Frontend | Preact, Vite, TypeScript, Tailwind CSS, shadcn-подход к UI |
+| Frontend | Preact, Vite, TypeScript, Tailwind CSS, shadcn/ui |
 | Backend | Node.js, Express 5, TypeScript, Zod |
 | База данных | PostgreSQL, Prisma |
 | Авторизация | bcryptjs, JWT, httpOnly cookie |
@@ -34,9 +48,9 @@
 | Деплой | Netlify, Netlify Functions |
 | Качество | ESLint, Prettier, Husky, GitHub Actions |
 
-## Быстрый старт
+## Подробности запуска
 
-Нужен только Docker с Docker Compose.
+Клонирование и запуск:
 
 ```bash
 git clone https://github.com/YakovlevCoded/spiskom.git
@@ -59,9 +73,15 @@ docker compose up --build
 | Проверка API | http://localhost:4000/api/health |
 | Письма Mailpit | http://localhost:8025 |
 
-Первый запуск собирает образы и применяет миграции автоматически. Отдельно создавать `.env`, базу или таблицы не нужно. Почта тоже работает сразу: письма попадают в Mailpit на http://localhost:8025, регистрация в почтовых сервисах не нужна.
+Первый запуск собирает образы и применяет миграции автоматически. Отдельно создавать базу или таблицы не нужно.
 
-Почта не обязательна. Без email-провайдера приложение работает: регистрация и вход доступны сразу, письмо после регистрации не отправляется. Если добавить `RESEND_API_KEY`, письмо будет уходить на почту, а сброс пароля заработает по ссылке из письма.
+Локальные значения можно изменить в корневом `.env`. Шаблон:
+
+```bash
+cp .env.example .env
+```
+
+Без `.env` Docker Compose использует те же значения по умолчанию. Если указан `RESEND_API_KEY`, письма уходят через Resend. Без него приложение работает, а письма складываются в Mailpit на http://localhost:8025.
 
 Остановить:
 
@@ -128,7 +148,15 @@ npm run dev
 npm --prefix backend run db:seed
 ```
 
-Аккаунт: `demo@spiskom.ru`, пароль: `demo12345`.
+Тестовые аккаунты:
+
+| Email | Пароль | Что внутри |
+| --- | --- | --- |
+| `demo@spiskom.ru` | `demo12345` | Три задачи, одна выполнена |
+| `test@spiskom.ru` | `test12345` | Пять задач в разных статусах |
+| `empty@spiskom.ru` | `empty12345` | Пустой список |
+
+Скрипт можно запускать повторно: задачи не дублируются, а пароли тестовых аккаунтов возвращаются к указанным выше. На production-версии этих аккаунтов нет — там зарегистрируйте свой.
 
 ### Почта при локальном запуске
 
@@ -170,7 +198,7 @@ MAIL_FROM="Списком <your-address@gmail.com>"
 
 ## Переменные окружения
 
-Пример находится в `backend/.env.example`.
+Для Docker используется корневой `.env`, шаблон — `.env.example`. Для нативного запуска API используется `backend/.env`, шаблон — `backend/.env.example`. Готовый шаблон для Supabase и Netlify — `backend/.env.supabase.example`.
 
 | Переменная | Назначение |
 | --- | --- |
@@ -189,7 +217,7 @@ MAIL_FROM="Списком <your-address@gmail.com>"
 | `MAIL_FROM` | Отправитель писем |
 | `RESEND_API_KEY` | Ключ Resend, альтернатива SMTP |
 
-В Docker все локальные значения уже заданы в `docker-compose.yml`.
+В Docker все локальные значения заданы в `docker-compose.yml` и могут переопределяться корневым `.env`.
 
 ## API
 
@@ -224,6 +252,7 @@ GET    /api/health
 
 ```text
 .
+├── .env.example
 ├── backend/
 │   ├── prisma/
 │   │   ├── schema.prisma
@@ -270,7 +299,7 @@ GET    /api/health
 - `frontend/src/types` — только типы.
 - `frontend/src/api` — HTTP-запросы.
 - `frontend/src/hooks` — состояние, мутации и формы.
-- `frontend/src/components/ui` — визуальные примитивы.
+- `frontend/src/components/ui` — shadcn/ui-примитивы и хуки для их поведения.
 - `frontend/src/components/todos` и `auth` — презентационные компоненты.
 - `frontend/src/pages` — композиция.
 - `backend/src/modules/*/routes` — HTTP и валидация.
@@ -313,36 +342,47 @@ npm run build
 
 1. Подключите репозиторий к Netlify.
 2. Netlify прочитает команду сборки из `netlify.toml`.
-3. Создайте PostgreSQL в Supabase или другом managed-сервисе.
-4. Добавьте переменные окружения в Netlify:
+3. Создайте проект в Supabase и откройте **Connect**.
+4. Возьмите оттуда две строки:
+
+```text
+DATABASE_URL — Transaction pooler, порт 6543
+postgresql://postgres.<project-ref>:<password>@<pooler-host>:6543/postgres?pgbouncer=true&connection_limit=1&sslmode=require
+
+DIRECT_URL — Session pooler, порт 5432
+postgresql://postgres.<project-ref>:<password>@<pooler-host>:5432/postgres?sslmode=require
+```
+
+Хост пулера берите из Connect: его нельзя собрать из региона вручную. Пароль базы — тот, который задавали при создании проекта; спецсимволы в нём нужно закодировать.
+
+5. Добавьте переменные окружения в Netlify:
 
 ```text
 NODE_ENV=production
-DATABASE_URL=postgresql://...pooler...:6543/postgres?pgbouncer=true&connection_limit=1
-DIRECT_URL=postgresql://...:5432/postgres
+DATABASE_URL=<transaction-pooler-url>
+DIRECT_URL=<session-pooler-url>
 JWT_SECRET=<длинный случайный секрет>
-APP_URL=https://<ваш-сайт>.netlify.app
-WEB_ORIGIN=https://<ваш-сайт>.netlify.app
+APP_URL=https://spiskom.netlify.app
+WEB_ORIGIN=https://spiskom.netlify.app
 COOKIE_SECURE=true
-MAIL_FROM=Списком <no-reply@your-domain.ru>
-RESEND_API_KEY=<ключ Resend>
+MAIL_FROM=Списком <no-reply@spiskom.local>
+RESEND_API_KEY=
 ```
 
-Вместо `RESEND_API_KEY` можно передать `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` и `SMTP_PASSWORD`.
+Готовый шаблон: `backend/.env.supabase.example`.
 
-5. Примените миграции к production-базе:
+6. Примените миграции к production-базе:
 
 ```bash
-DATABASE_URL="<pooler-url>" DIRECT_URL="<direct-url>" npm --prefix backend run db:deploy
+DATABASE_URL="<transaction-pooler-url>" DIRECT_URL="<session-pooler-url>" npm --prefix backend run db:deploy
 ```
 
-6. Задеплойте сайт.
+7. Задеплойте сайт.
 
-Supabase здесь используется только как PostgreSQL. Авторизация, API и Prisma остаются внутри проекта. Для локального запуска Supabase не нужен.
+Supabase здесь используется только как PostgreSQL. Ключи `sb_publishable_...` и `sb_secret_...` для Data API не нужны: Prisma подключается к базе напрямую по `DATABASE_URL`. Авторизация, API и Prisma остаются внутри проекта. Для локального запуска Supabase не нужен.
 
 ## Ограничения
 
-- Нет подтверждения email при регистрации.
 - Нет команд, ролей и совместного доступа.
 - Список задач не разбит на страницы.
 - Восстановление пароля зависит от настроенного почтового провайдера в production.
